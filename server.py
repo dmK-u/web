@@ -16,6 +16,8 @@ with conn:
         data = conn.recv(1024)         # Read data from socket. Max block size in which data is read: 1024bytes. If you `nc` in and then write something and press enter it will show up here
         if data:                       # Check if data is actually something new and interesting we sent to the socket or just null(which is falsy) because it is in a while loop constantly polling
             print(data)
+            # Send Response to the client: .encode will encode the f-string into a byte-type object(b'any') because that is what sendall() expects
+            conn.sendall(f"<echo> Following data arrived at server and echoed back: {data}\n".encode())
 
 
 mySocket.close()

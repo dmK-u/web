@@ -73,4 +73,3 @@ while True:
     worldWarIII = threading.Thread(target=augustinerBraeuMuenchen, args=(conn, addr))
     worldWarIII.start() 
 
-

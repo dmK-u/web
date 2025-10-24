@@ -3,7 +3,7 @@ import threading
 import os
 import mimetypes
 
-root = "/home/dmk/github/web/serve"
+root = "/var/www/html"
 abs_root = os.path.abspath(root)
 
 def sendHttpResponse(conn, statusCode, statusText, body=b"", contentType="text/html"):
@@ -14,6 +14,9 @@ def sendHttpResponse(conn, statusCode, statusText, body=b"", contentType="text/h
         header += f"Content-Type: {contentType}\r\n"
         header += f"Content-Length: {len(body_bytes)}\r\n"
         header += "Connection: close\r\n\r\n"
+
+
+        print(f"\n________________________________\n\nHTTP Response Received:\n\n{header}{body_bytes.decode('latin-1')}\n________________________________\n")
         
         conn.sendall(header.encode('latin-1'))
         conn.sendall(body_bytes)
@@ -21,6 +24,9 @@ def sendHttpResponse(conn, statusCode, statusText, body=b"", contentType="text/h
         print(f"Error sending response: {e}")
 
 def httpParse(httpRequest, conn):
+
+    print(f"\n________________________________\n\nHTTP Request Received:\n\n{httpRequest.decode('latin-1')}\n________________________________\n")
+
     try:
         request_str = httpRequest.decode('latin-1')
         lines = request_str.split("\r\n")
@@ -114,12 +120,15 @@ def augustinerBraeuMuenchen(conn, addr):
         conn.close()
 
 
-###
+
+port = 80
 
 meineSocke = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 meineSocke.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-meineSocke.bind(("", 80))
+meineSocke.bind(("", port))
 meineSocke.listen(1)
+
+print(f"\nServer is running on port: {port}")
 
 while True:
     conn, addr = meineSocke.accept()

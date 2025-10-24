@@ -7,22 +7,11 @@ root = "/var/www/html"
 abs_root = os.path.abspath(root)
 
 def getParam(paramString, paramName):
+    for param in paramString.split("&"):
+        currentParamName, currentParamValue = param.split("=")
+        if(currentParamName == paramName):
+            return currentParamValue
 
-    params = paramString.split("&")                 # paramString: param1=value1&param2=value2&param3=value3  ---> params: ["param1=value1", "param2=value2", "param3=value3"] 
-
-    paramsMatrix = []
-
-    for param in params:
-        paramsMatrix.append(param.split("="))
-
-    if paramName == 42:                             # Option to return the entire paramsMatrix
-        return paramsMatrix
-
-    # Now we have the paramsMatrix List which does(should) look like thtis now: [["param1", "value1"], ["param2", "value2"], ["param3", "value3"]]
-
-    for paramPair in paramsMatrix:        
-        if(paramPair[0] == paramName):
-            return paramPair[1]
     
     return ""
 
@@ -60,13 +49,20 @@ def httpParse(httpRequest, conn):
         if len(first_line_parts) != 3:
             raise ValueError("Malformed request line")
             
-        method, fullpath, version = first_line_parts
+        method, fullPath, version = first_line_parts
 
-        path, paramString = fullpath.split("?")         # /index.html?param1=value1&param2=value2&param3=value3  ---> path: index.html  |  paramString: param1=value1&param2=value2&param3=value3
+        print(len(fullPath.split("?")))
+        if(len(fullPath.split("?")) == 2):
+            path, paramString = fullPath.split("?")         # /index.html?param1=value1&param2=value2&param3=value3  ---> path: index.html  |  paramString: param1=value1&param2=value2&param3=value3
+            print(getParam(paramString, 42))                # Get paramMatrix
+            print(getParam(paramString, 'ab'))          # Get value of param3
 
-        print(getParam(paramString, 42))                # Get paramMatrix
+        else:
+            path = fullPath
 
-        print(getParam(paramString, 'param3'))          # Get value of param3
+
+
+
 
  
 

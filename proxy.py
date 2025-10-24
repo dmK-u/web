@@ -1,0 +1,167 @@
+import socket
+import threading
+import os
+import mimetypes
+
+root = "/var/www/html"
+abs_root = os.path.abspath(root)
+
+def getParam(paramString, paramName):
+
+    params = paramString.split("&")                 # paramString: param1=value1&param2=value2&param3=value3  ---> params: ["param1=value1", "param2=value2", "param3=value3"] 
+
+    paramsMatrix = []
+
+    for param in params:
+        paramsMatrix.append(param.split("="))
+
+    if paramName == 42:                             # Option to return the entire paramsMatrix
+        return paramsMatrix
+
+    # Now we have the paramsMatrix List which does(should) look like thtis now: [["param1", "value1"], ["param2", "value2"], ["param3", "value3"]]
+
+    for paramPair in paramsMatrix:        
+        if(paramPair[0] == paramName):
+            return paramPair[1]
+    
+    return ""
+
+
+
+def sendHttpResponse(conn, statusCode, statusText, body=b"", contentType="text/html"):
+    try:
+        body_bytes = body if isinstance(body, bytes) else body.encode('latin-1')
+        
+        header = f"HTTP/1.1 {statusCode} {statusText}\r\n"
+        header += f"Content-Type: {contentType}\r\n"
+        header += f"Content-Length: {len(body_bytes)}\r\n"
+        header += "Connection: close\r\n\r\n"
+
+
+        print(f"\n________________________________\n\nHTTP Response Received:\n\n{header}{body_bytes.decode('latin-1')}\n________________________________\n")
+        
+        conn.sendall(header.encode('latin-1'))
+        conn.sendall(body_bytes)
+    except Exception as e:
+        print(f"Error sending response: {e}")
+
+def httpParse(httpRequest, conn):
+
+    print(f"\n________________________________\n\nHTTP Request Received:\n\n{httpRequest.decode('latin-1')}\n________________________________\n")
+
+    try:
+        request_str = httpRequest.decode('latin-1')
+        lines = request_str.split("\r\n")
+
+        if not lines:
+            raise ValueError("Empty request")
+
+        first_line_parts = lines[0].split(" ")
+        if len(first_line_parts) != 3:
+            raise ValueError("Malformed request line")
+            
+        method, fullpath, version = first_line_parts
+
+        path, paramString = fullpath.split("?")         # /index.html?param1=value1&param2=value2&param3=value3  ---> path: index.html  |  paramString: param1=value1&param2=value2&param3=value3
+
+        print(getParam(paramString, 42))                # Get paramMatrix
+
+        print(getParam(paramString, 'param3'))          # Get value of param3
+
+ 
+
+    except (UnicodeDecodeError, IndexError, ValueError) as e:
+        sendHttpResponse(conn, 400, "Bad Request", b"<h1>400 Bad Request</h1>")
+        print(f"Sent 400 Bad Request due to: {e}")
+        return
+
+    if method != "GET":
+        sendHttpResponse(conn, 400, "Bad Request", b"<h1>400 Bad Request: Only GET supported</h1>")
+        return
+
+    if path == "/":
+        path = "/index.html"
+
+    relative_path = path.lstrip('/')
+    
+    real_root = os.path.realpath(abs_root)
+    real_target = os.path.realpath(os.path.join(abs_root, relative_path))
+
+    print(f"DEBUG: Checking path: {real_target}")
+    print(f"DEBUG: Against root:  {abs_root}")
+    
+    # curl --path-as-is localhost/../server.py
+    
+    if not real_target.startswith(real_root + os.sep):
+        sendHttpResponse(conn, 403, "Forbidden", b"<h1>403 Forbidden</h1>")
+        print(f"Forbidden path traversal attempt: {path}")
+        return
+    
+    if not real_target.startswith(abs_root):
+        sendHttpResponse(conn, 403, "Forbidden", b"<h1>403 Forbidden</h1>")
+        print(f"Forbidden path traversal attempt: {path}")
+        return
+    
+    if os.path.isdir(real_target):
+        sendHttpResponse(conn, 403, "Forbidden", b"<h1>403 Forbidden: Is a directory</h1>")
+        print(f"Forbidden directory access attempt: {path}")
+        return
+
+    if not os.path.isfile(real_target):
+        sendHttpResponse(conn, 404, "Not Found", b"<h1>404 Not Found</h1>")
+        print(f"File not found: {real_target}")
+        return
+
+    if not os.access(real_target, os.R_OK):
+        sendHttpResponse(conn, 403, "Forbidden", b"<h1>403 Forbidden: Permission Denied</h1>")
+        print(f"Permission denied: {real_target}")
+        return
+
+    try:
+        with open(real_target, "rb") as file:
+            fileContent = file.read()
+            
+        mime_type, _ = mimetypes.guess_type(real_target)
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+            
+        sendHttpResponse(conn, 200, "OK", fileContent, mime_type)
+
+    except IOError as e:
+        sendHttpResponse(conn, 500, "Internal Server Error", b"<h1>500 Internal Server Error</h1>")
+        print(f"Internal error reading file: {e}")
+
+def augustinerBraeuMuenchen(conn, addr):
+    print(f"Handling connection from {addr}")
+    try:
+        data = conn.recv(1024) 
+
+        if not data:
+            print(f"Connection from {addr} closed by client.")
+        else:
+            httpParse(data, conn)
+            
+    except ConnectionResetError:
+        print(f"Connection from {addr} reset.")
+    except Exception as e:
+        print(f"Error on connection {addr}: {e}")
+    finally:
+        print(f"Closed connection for {addr}")
+        conn.close()
+
+
+
+port = 80
+
+meineSocke = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+meineSocke.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+meineSocke.bind(("", port))
+meineSocke.listen(1)
+
+print(f"\nServer is running on port: {port}")
+
+while True:
+    conn, addr = meineSocke.accept()
+    print("Connection by", addr)
+    worldWarIII = threading.Thread(target=augustinerBraeuMuenchen, args=(conn, addr))
+    worldWarIII.start()

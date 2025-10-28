@@ -5,6 +5,7 @@ import threading
 
 def sendHttpResponse(conn, statusCode, statusText, body=b"", contentType="text/html"):
     try:
+        # if body is bytes, take it. If not, encode it latin-1
         body_bytes = body if isinstance(body, bytes) else body.encode('latin-1')
         
         header = f"HTTP/1.1 {statusCode} {statusText}\r\n"

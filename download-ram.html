@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: blue;
+            color: yellow;
+            font-family: "Comic Sans MS", cursive;
+            text-align: center;
+            overflow: hidden;
+        }
+        .blink { animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+        
+        .popup {
+            position: absolute;
+            top: 20%; left: 30%;
+            background: lightgrey;
+            border: 5px outset white;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 10px 10px 0px black;
+        }
+        button { background: red; color: white; font-size: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <marquee scrollamount="20"><h1>⚠️ WARNING: INTERNET IS LEAKING ⚠️</h1></marquee>
+    
+    <div class="popup">
+        <h2 style="background:blue; color:white; margin:0;">SYSTEM ERROR</h2>
+        <p>You do not have enough RAM to view this website.</p>
+        <p class="blink">CLICK BELOW TO DOWNLOAD MORE RAM!!!</p>
+        <button onclick="alert('Viru... I mean RAM downloaded!')">DOWNLOAD 128GB NOW</button>
+    </div>
+
+    <br><br><br><br><br><br><br><br><br>
+    <img src="https://media.giphy.com/media/unQ3IJU2RG7XMjNOtE/giphy.gif" width="100">
+    <p>Visitor count: 1,000,000</p>
+</body>
+</html>

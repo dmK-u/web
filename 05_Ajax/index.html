@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h2>AJAX Calculator</h2>
+        
+        <div class="input-group">
+            <label>Value A: <input type="text" id="valA"></label>
+        </div>
+        <div class="input-group">
+            <label>Value B: <input type="text" id="valB"></label>
+        </div>
+
+        <div class="btn-group">
+            <button onclick="sendRequest('add')">Add</button>
+            <button onclick="sendRequest('sub')">Subtract</button>
+            <button onclick="sendRequest('mul')">Multiply</button>
+            <button onclick="sendRequest('div')">Divide</button>
+        </div>
+
+        <div id="result-area">
+            Result: <span id="output">...</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

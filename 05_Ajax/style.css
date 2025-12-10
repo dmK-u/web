@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    padding: 20px;
+}
+
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+input {
+    padding: 8px;
+    width: 100px;
+}
+
+.btn-group button {
+    padding: 8px 15px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+#result-area {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #e8e8e8;
+    border: 1px solid #ccc;
+    font-weight: bold;
+}

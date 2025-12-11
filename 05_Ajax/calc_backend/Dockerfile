@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Expose the port you chose (8080)
-EXPOSE 8080
+EXPOSE 8081
 
 # Start the server
 CMD ["node", "restapi.js"]

@@ -17,7 +17,7 @@ app.get("/add", (req, res) => {
     }
 
     result = var1 + var2;
-
+    console.log("Finnished addition:", result);
     res.send("" + result);
 });
 
@@ -32,7 +32,7 @@ app.get("/sub", (req, res) => {
     }
 
     result = var1 - var2;
-
+    console.log("Finnished substratction:", result);
     res.send("" + result);
 });
 app.get("/mul", (req, res) => {
@@ -46,7 +46,7 @@ app.get("/mul", (req, res) => {
     }
 
     result = var1 * var2;
-
+    console.log("Finnished mult:", result);
     res.send("" + result);
 });
 app.get("/div", (req, res) => {
@@ -65,6 +65,6 @@ app.get("/div", (req, res) => {
     }
 
     result = var1 / var2;
-
+    console.log("Finnished division:", result);
     res.send("" + result);
 });

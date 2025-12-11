@@ -4,7 +4,7 @@ function sendRequest(endpoint) {
     var b = document.getElementById('valB').value;
     var outputSpan = document.getElementById('output');
 
-    var url = "http://localhost:8080/" + endpoint + "?a=" + a + "&b=" + b;
+    var url = "http://localhost:8081/" + endpoint + "?a=" + a + "&b=" + b;
 
     var request = null;
 

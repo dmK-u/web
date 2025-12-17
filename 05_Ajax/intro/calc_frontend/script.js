@@ -1,4 +1,13 @@
 function sendRequest(endpoint) {
+
+    var allowedEndpoints = ['add', 'sub', 'div', 'mul'];
+
+    if (!allowedEndpoints.includes(endpoint)) {
+        var outputSpan = document.getElementById('output');
+        outputSpan.innerText = "Error: Invalid operation selected.";
+        outputSpan.style.color = "red";
+        return;
+    }
     
     var a = document.getElementById('valA').value;
     var b = document.getElementById('valB').value;
